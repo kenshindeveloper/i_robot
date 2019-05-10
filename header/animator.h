@@ -15,6 +15,9 @@ typedef struct Animator {
     int currentIndex;
     float scale;
     Vector2 dimension;
+
+    int _prevIndex;
+    bool _isLeft;
 }Animator;
 
 Animator NewAnimator(const char*, int, float, Vector2);
@@ -25,8 +28,10 @@ bool DeleteAnimator(Animator*);
 
 Vector2 ImageQuadAnimator(Animator*);
 
-void SetAnimation(Animator*, const char*);
+void SetAnimationAnimator(Animator*, const char*, bool);
 
 void DrawAnimator(Animator*, Vector2);
+
+void FlipHImageAnimator(Animator*, bool);
 
 #endif //IANIMATOR_H

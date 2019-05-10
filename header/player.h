@@ -3,10 +3,16 @@
 
 #include "raylib.h"
 #include "animator.h"
+#include "shape.h"
 
 typedef struct Player {
     Vector2 position;
     Animator animator;
+    bool isLeft;
+    Shape shape;
+
+    float velocity;
+
 }Player;
 
 Player NewPlayer(Vector2);

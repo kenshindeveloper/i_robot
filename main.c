@@ -2,7 +2,6 @@
 #include "header/config.h"
 #include "header/player.h"
 
-
 Config config;
 
 int main(int argc, char* argv[]) {
@@ -24,5 +23,6 @@ int main(int argc, char* argv[]) {
     }
     DeletePlayer(&player);
     CloseWindow();
+
     return 0;
 }

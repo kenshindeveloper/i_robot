@@ -1,5 +1,9 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "../header/animation.h"
+#include "../header/config.h"
+
+extern Config config;
 
 Animation NewAnimation(char* name, int numFrames) {
     Animation animation;
@@ -32,14 +36,33 @@ bool DeleteAnimation(Animation* animation) {
     return false;
 }
 
-void DrawAnimation(Animation* animation, Texture2D* texture, Vector2 position) {
-    if (animation->frameFPS > (60/9)) {
+void DrawAnimation(Animation* animation, Texture2D* texture, Vector2 position, bool isLeft) {
+    if (animation->frameFPS > (config.fps/6)) {
         animation->index++;
         animation->frameFPS = 0;
 
         if (animation->index >= animation->numFrames)
             animation->index = 0;
     }
-    DrawTextureRec((*texture), animation->frames[animation->index], position, WHITE);
+
+    if (!isLeft) {
+        Rectangle frame = animation->frames[animation->index];
+        float pos = 0;
+        if (frame.x == 0)
+            pos = texture->width-frame.width;
+        else if (frame.x == frame.width)
+            pos = texture->width-frame.width*2;
+        else if (frame.x == frame.width*2)
+            pos = texture->width-frame.width*3;
+        else if (frame.x == frame.width*3)
+            pos = texture->width-frame.width*4;
+
+        Rectangle auxRect = (Rectangle) {pos, frame.y, frame.width, frame.height};
+        DrawTextureRec((*texture), auxRect, position, WHITE);
+    }
+    else {
+        DrawTextureRec((*texture), animation->frames[animation->index], position, WHITE);
+    }
+
     animation->frameFPS++;
 }

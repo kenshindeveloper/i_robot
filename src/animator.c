@@ -13,6 +13,8 @@ Animator NewAnimator(const char* path, int numAnimation, float scale, Vector2 di
     animator.animations = (Animation*) malloc(sizeof(Animation)*numAnimation);
     animator.scale = scale;
     animator.dimension = dimension;
+    animator._prevIndex = -1;
+    animator._isLeft = true;
 
     if (scale > 1.0f) {
         ImageResizeNN(&animator.image, animator.image.width*scale, animator.image.height*scale);
@@ -49,15 +51,29 @@ Vector2 ImageQuadAnimator(Animator* animator) {
     return (Vector2) {animator->image.width/animator->dimension.x, animator->image.height/animator->dimension.y};
 }
 
-void SetAnimation(Animator* animator, const char* name) {
+void SetAnimationAnimator(Animator* animator, const char* name, bool flag) {
+    FlipHImageAnimator(animator, flag);
     for (int i = 0; i < animator->numAnimations; i++) {
         if (strcmp(name, animator->animations[i].name) == 0) {
             animator->currentIndex = i;
+            if (animator->_prevIndex != animator->currentIndex) {
+                animator->animations[i].index = 0;
+                animator->_prevIndex = animator->currentIndex;
+            }
             break;
         }
     }
 }
 
 void DrawAnimator(Animator* animator, Vector2 position) {
-    DrawAnimation(&(animator->animations[animator->currentIndex]), &(animator->texture), position);
+    DrawAnimation(&(animator->animations[animator->currentIndex]), &(animator->texture), position, animator->_isLeft);
+}
+
+void FlipHImageAnimator(Animator* animator, bool isLeft) {
+    if (animator->_isLeft != isLeft) {
+        ImageFlipHorizontal(&animator->image);
+        UnloadTexture(animator->texture);
+        animator->texture = LoadTextureFromImage(animator->image);
+    }
+    animator->_isLeft = isLeft;
 }

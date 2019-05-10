@@ -18,6 +18,6 @@ bool PushFrameAnimation(Animation*, Rectangle);
 
 bool DeleteAnimation(Animation*);
 
-void DrawAnimation(Animation*, Texture2D*, Vector2);
+void DrawAnimation(Animation*, Texture2D*, Vector2, bool);
 
 #endif //IANIMATION_H

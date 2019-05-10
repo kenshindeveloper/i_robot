@@ -279,6 +279,7 @@ PROJECT_SOURCE_FILES ?= main.c          \
                         src/player.c    \
                         src/animation.c \
                         src/animator.c  \
+                        src/shape.c  \
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
