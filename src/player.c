@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include "../header/global.h"
 #include "../header/player.h"
+
+extern Global global;
 
 Player NewPlayer(Vector2 position) {
     Player player;
@@ -36,18 +39,22 @@ void EventPlayer(Player* player) {
     if (IsKeyDown(KEY_LEFT)) {
         player->isLeft = true;
         player->position.x -= player->velocity;
+        global.camera.offset.x += player->velocity;
         player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
         SetAnimationAnimator(&player->animator, "run", player->isLeft);
     }
     else if (IsKeyDown(KEY_RIGHT)) {
         player->isLeft = false;
         player->position.x += player->velocity;
+        global.camera.offset.x -= player->velocity;
         player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
         SetAnimationAnimator(&player->animator, "run", player->isLeft);
     }
     else {
         SetAnimationAnimator(&player->animator, "idle", player->isLeft);
     }
+
+    global.camera.target = player->position;
 }
 
 void DrawPlayer(Player* player) {

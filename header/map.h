@@ -12,15 +12,19 @@ typedef struct Tile {
 typedef struct Map {
     const char* path;
     Image image;
-    Texture texture;
+    Texture2D texture;
+    int quad;
     int** matrix;
     Vector2 size;
+    Vector2 dimension;
     Tile* tiles;
 }Map;
 
 void _LoadTile(Tile**, int, Rectangle);
 
-Map NewMap(const char*, Vector2);
+Tile* _GetTile(Map*, int);
+
+Map NewMap(const char*, const char*, Vector2, Vector2);
 
 void DeleteMap(Map*);
 
@@ -29,5 +33,7 @@ void Split(Map*, int, char*);
 int Len(char*);
 
 bool ReadFileMap(Map*);
+
+void DrawMap(Map*);
 
 #endif //IMAP_H
