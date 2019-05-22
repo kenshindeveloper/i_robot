@@ -127,39 +127,81 @@ bool ReadFileMap(Map* map) {
     return true;
 }
 
-void Split(Map* map, int rowIndex, char* string) {
-    int index = 0;
-    int value = 0;
-    int mult = 1; 
-    for (int i = 0; i < strlen(string); i++) {
-        if ((string[i] >= 48 && string[i] <= 57) || string[i] == '-') {
-            if (string[i] == '-') {
-                value = -1;
-            }
-            else {
-                if (value < 0)
-                    value = ((int) string[i] - '0') * mult * (-1);
-                else
-                    value += ((int) string[i] - '0') * mult;
-                mult *= 10;
-            }
-        }         
-        else if (string[i] == ',' || string[i] == '\n') {
-            map->matrix[rowIndex][index++] = value;
-            value = 0;
-            mult = 1;
-        }
-    }
+bool Split(Map* map, int rowIndex, char* string) {
+    // int index = 0;
+    // int value = 0;
+    // int mult = 1; 
+    // for (int i=0; i < strlen(string); i++) {
+    //     if ((string[i] >= 48 && string[i] <= 57) || string[i] == '-') {
+    //         if (string[i] == '-') {
+    //             value = -1;
+    //         }
+    //         else {
+    //             if (value < 0)
+    //                 value = ((int) string[i] - '0') * mult * (-1);
+    //             else
+    //                 value += ((int) string[i] - '0') * mult;
+    //             mult *= 10;
+    //         }
+    //     }         
+    //     else if (string[i] == ',' || string[i] == '\n') {
+    //         map->matrix[rowIndex][index++] = value;
+    //         value = 0;
+    //         mult = 1;
+    //     }
+    // }
+
+
+    char* data = NULL;
+	int size = 0;
+	int i = 0;
+	int index = 0;
+
+	while (string[i] != '\0') {
+		if ((string[i] >= 48 && string[i] <= 57) || string[i] == '-') {
+			size += 1;
+
+			if (data == NULL)
+				data = (char*) calloc(size, sizeof(char));
+			else {
+				char* auxData = (char*) realloc(data, size);
+				if (auxData == NULL) 
+					return false;
+				
+				data = auxData;
+			}
+
+			data[size-1] = string[i];	
+		}
+		else if (string[i] == '\n' || string[i] == ',') {
+			map->matrix[rowIndex][index++] = atoi(data);
+			size = 0;
+
+			if (data != NULL) {
+				free(data);
+				data = NULL;
+			}
+		}
+		i++;
+	}
+
+    if (data != NULL) {
+		map->matrix[rowIndex][index++] = atoi(data);
+		free(data);
+		data = NULL;
+	}
+	
+	return true;
 }
 
 int Len(char* string) {
-    int size = 0;
-
-    for (int i = 0; i < strlen(string); i++) {
-        if (string[i] == ',')
-            size++;
-    }
-    return (size > 0)?(size+1):(0);
+    int len = 0;
+	int index = 0;
+	while (string[index] != '\0') {
+		if (string[index++] == ',')
+			len++;
+	}
+	return len;
 }
 
 void DrawMap(Map* map) {

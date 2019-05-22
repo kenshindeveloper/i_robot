@@ -28,7 +28,7 @@ Map NewMap(const char*, const char*, Vector2, Vector2);
 
 void DeleteMap(Map*);
 
-void Split(Map*, int, char*);
+bool Split(Map*, int, char*);
 
 int Len(char*);
 
