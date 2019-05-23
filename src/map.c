@@ -2,12 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../header/map.h"
+#include "../header/global.h"
 
-void _LoadTile(Tile** tile, int id, Rectangle rectangle) {
+extern Global global;
+
+void _LoadTile(Tile** tile, int id, Rectangle rectangle, bool solid) {
     if ((*tile) == NULL) {
         (*tile) = (Tile*) malloc(sizeof(Tile));
         (*tile)->id = id;
         (*tile)->rectangle = rectangle;
+        (*tile)->solid = solid;
         (*tile)->prox = NULL;
     }
     else {
@@ -18,6 +22,7 @@ void _LoadTile(Tile** tile, int id, Rectangle rectangle) {
         auxTile->prox = (Tile*) malloc(sizeof(Tile));
         auxTile->prox->id = id;
         auxTile->prox->rectangle = rectangle;
+        auxTile->prox->solid = solid;
         auxTile->prox->prox = NULL;
     }
 }
@@ -46,37 +51,37 @@ Map NewMap(const char* path, const char* pathImage, Vector2 size, Vector2 dimens
 
     ReadFileMap(&map);
 
-    for (int i=0; i < map.size.y; i++) {
-        for (int j=0; j < map.size.x; j++)
-            printf("%d ", map.matrix[i][j]);
-        printf("\n"); 
-    }
+    // for (int i=0; i < map.size.y; i++) {
+    //     for (int j=0; j < map.size.x; j++)
+    //         printf("%d ", map.matrix[i][j]);
+    //     printf("\n"); 
+    // }
 
     //Carga los tiles
     map.quad = (int) (map.image.width / map.dimension.x);
     // Load first row
-    _LoadTile(&map.tiles, 0, (Rectangle) {0, 0, map.quad, map.quad});
-    _LoadTile(&map.tiles, 1, (Rectangle) {map.quad, 0,map.quad,map.quad});
-    _LoadTile(&map.tiles, 2, (Rectangle) {map.quad*2, 0,map.quad,map.quad});
+    _LoadTile(&map.tiles, 0, (Rectangle) {0, 0, map.quad, map.quad}, true);
+    _LoadTile(&map.tiles, 1, (Rectangle) {map.quad, 0,map.quad,map.quad}, false);
+    _LoadTile(&map.tiles, 2, (Rectangle) {map.quad*2, 0,map.quad,map.quad}, true);
 
-    _LoadTile(&map.tiles, 3, (Rectangle) {0,map.quad,map.quad,map.quad});
-    _LoadTile(&map.tiles, 4, (Rectangle) {map.quad,map.quad,map.quad,map.quad});
-    _LoadTile(&map.tiles, 5, (Rectangle) {map.quad*2,map.quad,map.quad,map.quad});
+    _LoadTile(&map.tiles, 3, (Rectangle) {0,map.quad,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 4, (Rectangle) {map.quad,map.quad,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 5, (Rectangle) {map.quad*2,map.quad,map.quad,map.quad}, true);
 
-    _LoadTile(&map.tiles, 6, (Rectangle) {0,map.quad*2,map.quad,map.quad});
-    _LoadTile(&map.tiles, 7, (Rectangle) {map.quad,map.quad*2,map.quad,map.quad});
-    _LoadTile(&map.tiles, 8, (Rectangle) {map.quad*2,map.quad*2,map.quad,map.quad});
+    _LoadTile(&map.tiles, 6, (Rectangle) {0,map.quad*2,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 7, (Rectangle) {map.quad,map.quad*2,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 8, (Rectangle) {map.quad*2,map.quad*2,map.quad,map.quad}, true);
 
-    _LoadTile(&map.tiles, 9, (Rectangle) {0,map.quad*3,map.quad,map.quad});
-    _LoadTile(&map.tiles, 10, (Rectangle) {map.quad,map.quad*3,map.quad,map.quad});
-    _LoadTile(&map.tiles, 11, (Rectangle) {map.quad*2,map.quad*3,map.quad,map.quad});
+    _LoadTile(&map.tiles, 9, (Rectangle) {0,map.quad*3,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 10, (Rectangle) {map.quad,map.quad*3,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 11, (Rectangle) {map.quad*2,map.quad*3,map.quad,map.quad}, true);
 
-    _LoadTile(&map.tiles, 12, (Rectangle) {0,map.quad*4,map.quad,map.quad});
-    _LoadTile(&map.tiles, 13, (Rectangle) {map.quad,map.quad*4,map.quad,map.quad});
-    _LoadTile(&map.tiles, 14, (Rectangle) {map.quad*2,map.quad*4,map.quad,map.quad});
+    _LoadTile(&map.tiles, 12, (Rectangle) {0,map.quad*4,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 13, (Rectangle) {map.quad,map.quad*4,map.quad,map.quad}, false);
+    _LoadTile(&map.tiles, 14, (Rectangle) {map.quad*2,map.quad*4,map.quad,map.quad}, false);
 
-    _LoadTile(&map.tiles, 15, (Rectangle) {0,map.quad*5,map.quad,map.quad});
-    _LoadTile(&map.tiles, 16, (Rectangle) {map.quad,map.quad*5,map.quad,map.quad});
+    _LoadTile(&map.tiles, 15, (Rectangle) {0,map.quad*5,map.quad,map.quad}, false);
+    _LoadTile(&map.tiles, 16, (Rectangle) {map.quad,map.quad*5,map.quad,map.quad}, false);
     // _LoadTile(&map.tiles, 15, (Rectangle) {quad*2,map.quad*4,map.quad,map.quad});
 
     return map;
@@ -128,30 +133,6 @@ bool ReadFileMap(Map* map) {
 }
 
 bool Split(Map* map, int rowIndex, char* string) {
-    // int index = 0;
-    // int value = 0;
-    // int mult = 1; 
-    // for (int i=0; i < strlen(string); i++) {
-    //     if ((string[i] >= 48 && string[i] <= 57) || string[i] == '-') {
-    //         if (string[i] == '-') {
-    //             value = -1;
-    //         }
-    //         else {
-    //             if (value < 0)
-    //                 value = ((int) string[i] - '0') * mult * (-1);
-    //             else
-    //                 value += ((int) string[i] - '0') * mult;
-    //             mult *= 10;
-    //         }
-    //     }         
-    //     else if (string[i] == ',' || string[i] == '\n') {
-    //         map->matrix[rowIndex][index++] = value;
-    //         value = 0;
-    //         mult = 1;
-    //     }
-    // }
-
-
     char* data = NULL;
 	int size = 0;
 	int i = 0;
@@ -211,9 +192,11 @@ void DrawMap(Map* map) {
     for (int i=0; i < map->size.y; i++) {
         for (int j=0; j < map->size.x; j++) {
             auxTile = _GetTile(map, map->matrix[i][j]);
-            if (auxTile != NULL)
+            if (auxTile != NULL) {
                 DrawTextureRec(map->texture, auxTile->rectangle, position, WHITE);
-            
+                if (auxTile->solid)
+                    DrawRectangle(position.x, position.y, map->quad, map->quad, global.ground);
+            }
             position.x += map->quad;
         }
         position.x = 0;

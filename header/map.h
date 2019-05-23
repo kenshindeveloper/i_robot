@@ -7,6 +7,7 @@ typedef struct Tile {
     int id;
     Rectangle rectangle;
     struct Tile* prox;
+    bool solid;
 }Tile;
 
 typedef struct Map {
@@ -20,7 +21,7 @@ typedef struct Map {
     Tile* tiles;
 }Map;
 
-void _LoadTile(Tile**, int, Rectangle);
+void _LoadTile(Tile**, int, Rectangle, bool);
 
 Tile* _GetTile(Map*, int);
 

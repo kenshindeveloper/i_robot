@@ -4,7 +4,9 @@
 #include "raylib.h"
 
 typedef struct Global {
-    Camera2D camera;    
+    Camera2D camera;  
+
+    Color ground;  
 }Global;
 
 Global NewGlobal();

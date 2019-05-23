@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     SetTargetFPS(config.fps);
     SetExitKey(KEY_F8);
     
-    Player player = NewPlayer((Vector2) {0.0f, 0.0f});
+    Player player = NewPlayer((Vector2) {100.0f, 100.0f});
     global.camera.target = player.position;
 
     Map map = NewMap("resources/maps/map_0.csv", "resources/sprites/tiles.png", (Vector2) {32, 16}, (Vector2) {3, 5});
