@@ -46,6 +46,7 @@ Map NewMap(const char* path, const char* pathImage, Vector2 size, Vector2 dimens
     map.tiles = NULL;
     map.matrix = (int**) calloc(size.y, sizeof(int));
     map.dimension = dimension;
+    map.tileMap = NULL;
     for (int i = 0; i < map.size.y; i++)
         map.matrix[i] = (int*) calloc(size.x, sizeof(int));
 
@@ -60,12 +61,13 @@ Map NewMap(const char* path, const char* pathImage, Vector2 size, Vector2 dimens
     //Carga los tiles
     map.quad = (int) (map.image.width / map.dimension.x);
     // Load first row
+    _LoadTile(&map.tiles, -1, (Rectangle) {0, 0, 0, 0}, false);
     _LoadTile(&map.tiles, 0, (Rectangle) {0, 0, map.quad, map.quad}, true);
-    _LoadTile(&map.tiles, 1, (Rectangle) {map.quad, 0,map.quad,map.quad}, false);
-    _LoadTile(&map.tiles, 2, (Rectangle) {map.quad*2, 0,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 1, (Rectangle) {map.quad, 0, map.quad, map.quad}, false);
+    _LoadTile(&map.tiles, 2, (Rectangle) {map.quad*2, 0, map.quad, map.quad}, true);
 
-    _LoadTile(&map.tiles, 3, (Rectangle) {0,map.quad,map.quad,map.quad}, true);
-    _LoadTile(&map.tiles, 4, (Rectangle) {map.quad,map.quad,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 3, (Rectangle) {0, map.quad, map.quad, map.quad}, true);
+    _LoadTile(&map.tiles, 4, (Rectangle) {map.quad, map.quad, map.quad, map.quad}, true);
     _LoadTile(&map.tiles, 5, (Rectangle) {map.quad*2,map.quad,map.quad,map.quad}, true);
 
     _LoadTile(&map.tiles, 6, (Rectangle) {0,map.quad*2,map.quad,map.quad}, true);
@@ -83,8 +85,39 @@ Map NewMap(const char* path, const char* pathImage, Vector2 size, Vector2 dimens
     _LoadTile(&map.tiles, 15, (Rectangle) {0,map.quad*5,map.quad,map.quad}, false);
     _LoadTile(&map.tiles, 16, (Rectangle) {map.quad,map.quad*5,map.quad,map.quad}, false);
     // _LoadTile(&map.tiles, 15, (Rectangle) {quad*2,map.quad*4,map.quad,map.quad});
+    _InitPositionTile(&map);
 
     return map;
+}
+
+void _InitPositionTile(Map* map) {
+    Vector2 position = (Vector2) {0, 0};
+
+    for (int i=0; i < map->size.y; i++) {
+        for (int j=0; j < map->size.x; j++) {
+            if (map->matrix[i][j] > -1) {
+                if (map->tileMap == NULL) {
+                    map->tileMap = (TileMap*) malloc(sizeof(TileMap));
+                    map->tileMap->fkTile = _GetTile(map, map->matrix[i][j]);
+                    map->tileMap->position = position;
+                    map->tileMap->prox = NULL;
+                }
+                else {
+                    TileMap* auxTileMap = map->tileMap;
+                    while (auxTileMap->prox != NULL)
+                        auxTileMap = auxTileMap->prox;
+
+                    auxTileMap->prox = (TileMap*) malloc(sizeof(TileMap));
+                    auxTileMap->prox->fkTile = _GetTile(map, map->matrix[i][j]);
+                    auxTileMap->prox->position = position;
+                    auxTileMap->prox->prox = NULL;
+                }
+            }
+            position.x += map->quad;
+        }
+        position.x = 0;
+        position.y += map->quad;
+    }
 }
 
 void DeleteMap(Map* map) {
@@ -96,10 +129,16 @@ void DeleteMap(Map* map) {
             free(auxTile);
             auxTile = NULL;
         }
+    }
 
-        if (map->tiles != NULL) {
-            free(map->tiles);
-            map->tiles = NULL;
+    if (map->tileMap != NULL) {
+        TileMap* auxTileMap = NULL;
+        while (map->tileMap != NULL) {
+            printf("eliminando tilemap...\n");
+            auxTileMap = map->tileMap;
+            map->tileMap = map->tileMap->prox;
+            free(auxTileMap);
+            auxTileMap = NULL;    
         }
     }
 
@@ -186,20 +225,13 @@ int Len(char* string) {
 }
 
 void DrawMap(Map* map) {
-    Tile* auxTile = map->tiles;
-    Vector2 position = (Vector2) {0, 0};
+    TileMap* auxTileMap = map->tileMap;
 
-    for (int i=0; i < map->size.y; i++) {
-        for (int j=0; j < map->size.x; j++) {
-            auxTile = _GetTile(map, map->matrix[i][j]);
-            if (auxTile != NULL) {
-                DrawTextureRec(map->texture, auxTile->rectangle, position, WHITE);
-                if (auxTile->solid)
-                    DrawRectangle(position.x, position.y, map->quad, map->quad, global.ground);
-            }
-            position.x += map->quad;
-        }
-        position.x = 0;
-        position.y += map->quad;
+    while(auxTileMap != NULL) {
+        DrawTextureRec(map->texture, auxTileMap->fkTile->rectangle, auxTileMap->position, WHITE);
+        if (auxTileMap->fkTile->solid)
+            DrawRectangle(auxTileMap->position.x, auxTileMap->position.y, map->quad, map->quad, global.groundColor);
+
+        auxTileMap = auxTileMap->prox;
     }
 }

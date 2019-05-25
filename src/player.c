@@ -35,20 +35,41 @@ void DeletePlayer(Player* player) {
     DeleteAnimator(&player->animator);
 }
 
-void EventPlayer(Player* player) {
+bool CheckCollision(Shape* shape, Map* map) {
+    TileMap* auxTileMap = map->tileMap;
+
+    Rectangle rectPlayer = GetRectangle(shape);
+    while (auxTileMap != NULL) {
+        if (auxTileMap->fkTile->solid && CheckCollisionRecs(rectPlayer, (Rectangle) {auxTileMap->position.x, auxTileMap->position.y, map->quad, map->quad}))
+        {
+            // DrawRectangleRec(auxTile->rectangle, YELLOW);
+            return true;
+        }  
+        
+        auxTileMap = auxTileMap->prox;
+    } 
+
+    return false;
+}
+
+void EventPlayer(Player* player, Map* map) {
     if (IsKeyDown(KEY_LEFT)) {
+        if(!player->isLeft ||  !CheckCollision(&(player->shape), map)) {
+            player->position.x -= player->velocity;
+            global.camera.offset.x += player->velocity;
+            player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
+            SetAnimationAnimator(&player->animator, "run", player->isLeft);
+        }
         player->isLeft = true;
-        player->position.x -= player->velocity;
-        global.camera.offset.x += player->velocity;
-        player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
-        SetAnimationAnimator(&player->animator, "run", player->isLeft);
     }
     else if (IsKeyDown(KEY_RIGHT)) {
+        if (player->isLeft || !CheckCollision(&(player->shape), map)) {
+            player->position.x += player->velocity;
+            global.camera.offset.x -= player->velocity;
+            player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
+            SetAnimationAnimator(&player->animator, "run", player->isLeft);
+        }
         player->isLeft = false;
-        player->position.x += player->velocity;
-        global.camera.offset.x -= player->velocity;
-        player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
-        SetAnimationAnimator(&player->animator, "run", player->isLeft);
     }
     else {
         SetAnimationAnimator(&player->animator, "idle", player->isLeft);

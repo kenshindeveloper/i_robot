@@ -22,13 +22,13 @@ int main(int argc, char* argv[]) {
     Map map = NewMap("resources/maps/map_0.csv", "resources/sprites/tiles.png", (Vector2) {32, 16}, (Vector2) {3, 5});
     
     while(!WindowShouldClose()) {
-        EventPlayer(&player);
+        EventPlayer(&player, &map);
 
         ClearBackground(BLACK);
         BeginDrawing();
             BeginMode2D(global.camera);
-                DrawPlayer(&player);
                 DrawMap(&map);
+                DrawPlayer(&player);
             EndMode2D();
         EndDrawing();
     }

@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "animator.h"
 #include "shape.h"
+#include "map.h"
 
 typedef struct Player {
     Vector2 position;
@@ -15,11 +16,13 @@ typedef struct Player {
 
 }Player;
 
+bool CheckCollision(Shape*, Map*);
+
 Player NewPlayer(Vector2);
 
 void DeletePlayer(Player*);
 
-void EventPlayer(Player*);
+void EventPlayer(Player*, Map*);
 
 void DrawPlayer(Player*);
 

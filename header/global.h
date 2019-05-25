@@ -6,7 +6,7 @@
 typedef struct Global {
     Camera2D camera;  
 
-    Color ground;  
+    Color groundColor;  
 }Global;
 
 Global NewGlobal();

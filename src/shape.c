@@ -16,3 +16,7 @@ void SetPositionShape(Shape* shape, Vector2 position) {
 void DrawShape(Shape* shape) {
     DrawRectangle(shape->position.x, shape->position.y, shape->size.x, shape->size.y, shape->color);
 }
+
+Rectangle GetRectangle(Shape* shape) {
+    return (Rectangle) {shape->position.x, shape->position.y, shape->size.x, shape->size.y};
+}

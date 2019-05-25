@@ -6,7 +6,7 @@ Global NewGlobal() {
     global.camera.rotation = 0.0f;
     global.camera.zoom = 1.0f;
 
-    global.ground = (Color) {255.0f, 0.0f, 0.0f, 155.0f};
+    global.groundColor = (Color) {255.0f, 0.0f, 0.0f, 155.0f};
 
     return global;
 }

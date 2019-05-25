@@ -16,4 +16,6 @@ void SetPositionShape(Shape*, Vector2);
 
 void DrawShape(Shape*);
 
+Rectangle GetRectangle(Shape*);
+
 #endif //ISHAPE_H

@@ -10,6 +10,12 @@ typedef struct Tile {
     bool solid;
 }Tile;
 
+typedef struct TileMap {
+    Tile* fkTile; 
+    Vector2 position;
+    struct TileMap* prox;
+}TileMap;
+
 typedef struct Map {
     const char* path;
     Image image;
@@ -19,9 +25,13 @@ typedef struct Map {
     Vector2 size;
     Vector2 dimension;
     Tile* tiles;
+    TileMap* tileMap;
 }Map;
 
+
 void _LoadTile(Tile**, int, Rectangle, bool);
+
+void _InitPositionTile(Map*);
 
 Tile* _GetTile(Map*, int);
 
