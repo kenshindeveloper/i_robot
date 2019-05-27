@@ -4,6 +4,7 @@
 #include "header/global.h"
 #include "header/player.h"
 #include "header/map.h"
+#include "header/grid.h"
 
 Config config;
 Global global;
@@ -21,12 +22,15 @@ int main(int argc, char* argv[]) {
 
     Map map = NewMap("resources/maps/map_0.csv", "resources/sprites/tiles.png", (Vector2) {32, 16}, (Vector2) {3, 5});
     
+    Grid grid = NewGrid((Vector2) {20, 20});
+
     while(!WindowShouldClose()) {
         EventPlayer(&player, &map);
 
         ClearBackground(BLACK);
         BeginDrawing();
             BeginMode2D(global.camera);
+                DrawIGrid(&grid);
                 DrawMap(&map);
                 DrawPlayer(&player);
             EndMode2D();

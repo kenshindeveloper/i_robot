@@ -5,7 +5,7 @@
 
 typedef struct Global {
     Camera2D camera;  
-
+    int valueMinTile;
     Color groundColor;  
 }Global;
 

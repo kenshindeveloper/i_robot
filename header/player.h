@@ -11,6 +11,8 @@ typedef struct Player {
     Animator animator;
     bool isLeft;
     Shape shape;
+    Shape ground;
+    bool isGround;
 
     float velocity;
 
@@ -25,5 +27,7 @@ void DeletePlayer(Player*);
 void EventPlayer(Player*, Map*);
 
 void DrawPlayer(Player*);
+
+bool IsGround(Shape*, Map*);
 
 #endif //IPLAYER_H

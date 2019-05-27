@@ -13,8 +13,14 @@ Player NewPlayer(Vector2 position) {
     Vector2 size = ImageQuadAnimator(&player.animator);
     
     player.shape.position = (Vector2) {position.x + 64, position.y + 42};
-    player.shape.size = (Vector2) {32 * 2, 32 * 3};
+    player.shape.size = (Vector2) {32 * 2, 32 *2};
     player.shape.color = (Color) {0.0f, 150.f, 200.0f, 100.0f};
+
+    player.ground.position = (Vector2) {position.x + 69, position.y + 115};
+    player.ground.size = (Vector2) {54, 24};
+    player.ground.color = (Color) {150.f, 150.f, 0.0f, 200.0f};
+    player.isGround = false;
+
 
     Animation idle = NewAnimation("idle", 2);
     PushFrameAnimation(&idle, (Rectangle) {0, 0, size.x, size.y});
@@ -41,13 +47,26 @@ bool CheckCollision(Shape* shape, Map* map) {
     Rectangle rectPlayer = GetRectangle(shape);
     while (auxTileMap != NULL) {
         if (auxTileMap->fkTile->solid && CheckCollisionRecs(rectPlayer, (Rectangle) {auxTileMap->position.x, auxTileMap->position.y, map->quad, map->quad}))
-        {
-            // DrawRectangleRec(auxTile->rectangle, YELLOW);
             return true;
-        }  
         
         auxTileMap = auxTileMap->prox;
     } 
+
+    return false;
+}
+
+bool IsGround(Shape* shape, Map* map) {
+    TileMap* auxTileMap = map->tileMap;
+
+    Rectangle rectPlayer = GetRectangle(shape);
+    Rectangle rectTile;
+    while (auxTileMap != NULL) {
+        rectTile = (Rectangle) {auxTileMap->position.x, auxTileMap->position.y, map->quad, map->quad};
+        if (CheckCollisionRecs(rectPlayer, rectTile)) // && (rectPlayer.y+rectPlayer.height+30) >= rectTile.y
+            return true;
+        
+        auxTileMap = auxTileMap->prox;
+    }
 
     return false;
 }
@@ -57,7 +76,6 @@ void EventPlayer(Player* player, Map* map) {
         if(!player->isLeft ||  !CheckCollision(&(player->shape), map)) {
             player->position.x -= player->velocity;
             global.camera.offset.x += player->velocity;
-            player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
             SetAnimationAnimator(&player->animator, "run", player->isLeft);
         }
         player->isLeft = true;
@@ -66,7 +84,6 @@ void EventPlayer(Player* player, Map* map) {
         if (player->isLeft || !CheckCollision(&(player->shape), map)) {
             player->position.x += player->velocity;
             global.camera.offset.x -= player->velocity;
-            player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
             SetAnimationAnimator(&player->animator, "run", player->isLeft);
         }
         player->isLeft = false;
@@ -75,10 +92,19 @@ void EventPlayer(Player* player, Map* map) {
         SetAnimationAnimator(&player->animator, "idle", player->isLeft);
     }
 
+    player->isGround = IsGround(&(player->ground), map); 
+    if (!player->isGround) {
+        player->position.y += 9.8;
+        global.camera.offset.y -= 9.8;
+    }
+    
+    player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
+    player->ground.position = (Vector2) {player->position.x + 69, player->position.y + 115};
     global.camera.target = player->position;
 }
 
 void DrawPlayer(Player* player) {
     DrawAnimator(&player->animator, player->position);
     DrawShape(&player->shape);
+    DrawShape(&player->ground);
 }

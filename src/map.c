@@ -95,23 +95,21 @@ void _InitPositionTile(Map* map) {
 
     for (int i=0; i < map->size.y; i++) {
         for (int j=0; j < map->size.x; j++) {
-            if (map->matrix[i][j] > -1) {
-                if (map->tileMap == NULL) {
-                    map->tileMap = (TileMap*) malloc(sizeof(TileMap));
-                    map->tileMap->fkTile = _GetTile(map, map->matrix[i][j]);
-                    map->tileMap->position = position;
-                    map->tileMap->prox = NULL;
-                }
-                else {
-                    TileMap* auxTileMap = map->tileMap;
-                    while (auxTileMap->prox != NULL)
-                        auxTileMap = auxTileMap->prox;
+            if ((map->matrix[i][j] >= 0) && (map->tileMap == NULL)) {
+                map->tileMap = (TileMap*) malloc(sizeof(TileMap));
+                map->tileMap->fkTile = _GetTile(map, map->matrix[i][j]);
+                map->tileMap->position = position;
+                map->tileMap->prox = NULL;
+            }
+            else if (map->matrix[i][j] >= 0) {
+                TileMap* auxTileMap = map->tileMap;
+                while (auxTileMap->prox != NULL)
+                    auxTileMap = auxTileMap->prox;
 
-                    auxTileMap->prox = (TileMap*) malloc(sizeof(TileMap));
-                    auxTileMap->prox->fkTile = _GetTile(map, map->matrix[i][j]);
-                    auxTileMap->prox->position = position;
-                    auxTileMap->prox->prox = NULL;
-                }
+                auxTileMap->prox = (TileMap*) malloc(sizeof(TileMap));
+                auxTileMap->prox->fkTile = _GetTile(map, map->matrix[i][j]);
+                auxTileMap->prox->position = position;
+                auxTileMap->prox->prox = NULL;
             }
             position.x += map->quad;
         }
@@ -134,7 +132,6 @@ void DeleteMap(Map* map) {
     if (map->tileMap != NULL) {
         TileMap* auxTileMap = NULL;
         while (map->tileMap != NULL) {
-            printf("eliminando tilemap...\n");
             auxTileMap = map->tileMap;
             map->tileMap = map->tileMap->prox;
             free(auxTileMap);
