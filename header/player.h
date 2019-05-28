@@ -18,6 +18,7 @@ typedef struct Player {
     
     Shape shape;
     Shape ground;
+    Shape head;
 }Player;
 
 bool CheckCollision(Shape*, Map*);
