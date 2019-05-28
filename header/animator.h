@@ -7,6 +7,7 @@
 
 typedef struct Animator {
     const char* path;
+    const char * nameAnimation;
     Image image;
     Texture2D texture;
     Animation* animations;
@@ -33,5 +34,7 @@ void SetAnimationAnimator(Animator*, const char*, bool);
 void DrawAnimator(Animator*, Vector2);
 
 void FlipHImageAnimator(Animator*, bool);
+
+const char* GetNameAnimator(Animator*);
 
 #endif //IANIMATOR_H

@@ -15,7 +15,8 @@ typedef struct Player {
     bool isJumping;
 
     float velocity;
-    
+    float contAnimaClose;
+
     Shape shape;
     Shape ground;
     Shape head;

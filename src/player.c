@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "../header/global.h"
 #include "../header/player.h"
 
@@ -7,9 +8,12 @@ extern Global global;
 Player NewPlayer(Vector2 position) {
     Player player;
     player.position = position;
-    player.animator = NewAnimator("resources/sprites/players.png", 4, 3.0f, (Vector2) {3.0f, 4.0f});
+    player.animator = NewAnimator("resources/sprites/players.png", 5, 3.0f, (Vector2) {3.0f, 4.0f});
     player.isLeft = true;
+
     player.velocity = 5.0f;
+    player.contAnimaClose = 0.0f;
+
     Vector2 size = ImageQuadAnimator(&player.animator);
     
     player.shape.position = (Vector2) {position.x + 64, position.y + 42};
@@ -47,6 +51,12 @@ Player NewPlayer(Vector2 position) {
     PushFrameAnimation(&down, (Rectangle) {size.x*2, size.y*3, size.x, size.y});
     PushFrameAnimation(&down, (Rectangle) {size.x*2, size.y*3, size.x, size.y});
     PushAnimationAnimator(&player.animator, down);
+
+    Animation close = NewAnimation("close", 3);
+    PushFrameAnimation(&close, (Rectangle) {size.x, size.y, size.x, size.y});
+    PushFrameAnimation(&close, (Rectangle) {size.x*2, size.y, size.x, size.y});
+    PushFrameAnimation(&close, (Rectangle) {size.x, size.y, size.x, size.y});
+    PushAnimationAnimator(&player.animator, close);
     
     return player;
 }
@@ -99,6 +109,8 @@ bool IsGround(Player* player, Map* map) {
 void EventPlayer(Player* player, Map* map) {
     bool isJumping = false;
 
+    player->isGround = IsGround(player, map); 
+    
     if (IsKeyDown(KEY_LEFT)) {
         if(!player->isLeft || !CheckCollision(&(player->shape), map)) {
             player->position.x -= player->velocity;
@@ -115,27 +127,37 @@ void EventPlayer(Player* player, Map* map) {
         }
         player->isLeft = false;
     }
-    else {
+    else if (player->contAnimaClose < 2)
         SetAnimationAnimator(&player->animator, "idle", player->isLeft);
-    }
-
+    
     if (IsKeyDown(KEY_UP) && !CheckCollision(&(player->head), map)) {
         isJumping = true;
         player->position.y -= 5.2;
         global.camera.offset.y += 5.2;
         SetAnimationAnimator(&player->animator, "jump", player->isLeft);
     }
-
-    player->isGround = IsGround(player, map); 
+    
+    if (player->isGround) {
+        if (IsKeyDown(KEY_DOWN))
+            SetAnimationAnimator(&player->animator, "down", player->isLeft);
         
-    if (player->isGround && IsKeyDown(KEY_DOWN)) {
-        SetAnimationAnimator(&player->animator, "down", player->isLeft);
+        if (strcmp(GetNameAnimator(&player->animator), "idle") == 0 || strcmp(GetNameAnimator(&player->animator), "close") == 0) {
+            player->contAnimaClose += GetFrameTime();
+            if (player->contAnimaClose > 2 && player->contAnimaClose < 2.5) {
+                SetAnimationAnimator(&player->animator, "close", player->isLeft);
+            }
+            else if (player->contAnimaClose >= 2.5) {
+                player->contAnimaClose = 0.0f;
+            }
+        }
+        else
+            player->contAnimaClose = 0.0f;
     }
-
-    if (!player->isGround && !isJumping) {
+    else if (!isJumping) {
         player->position.y += 9.8;
         global.camera.offset.y -= 9.8;
     }
+
 
     player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
     player->ground.position = (Vector2) {player->position.x + 69, player->position.y + 112};
