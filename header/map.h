@@ -6,6 +6,8 @@
 typedef struct Tile {
     int id;
     Rectangle rectangle;
+    Vector2 size;
+    Vector2 diff;
     struct Tile* prox;
     bool solid;
 }Tile;
@@ -29,7 +31,7 @@ typedef struct Map {
 }Map;
 
 
-void _LoadTile(Tile**, int, Rectangle, bool);
+void _LoadTile(Tile**, int, Rectangle, Vector2, Vector2, bool);
 
 void _InitPositionTile(Map*);
 

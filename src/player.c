@@ -7,7 +7,7 @@ extern Global global;
 Player NewPlayer(Vector2 position) {
     Player player;
     player.position = position;
-    player.animator = NewAnimator("resources/sprites/players.png", 2, 3.0f, (Vector2) {3.0f, 4.0f});
+    player.animator = NewAnimator("resources/sprites/players.png", 3, 3.0f, (Vector2) {3.0f, 4.0f});
     player.isLeft = true;
     player.velocity = 5.0f;
     Vector2 size = ImageQuadAnimator(&player.animator);
@@ -17,22 +17,27 @@ Player NewPlayer(Vector2 position) {
     player.shape.color = (Color) {0.0f, 150.f, 200.0f, 100.0f};
 
     player.ground.position = (Vector2) {position.x + 69, position.y + 112};
-    player.ground.size = (Vector2) {54, 24};
+    player.ground.size = (Vector2) {54, 27};
     player.ground.color = (Color) {150.f, 150.f, 0.0f, 200.0f};
     player.isGround = false;
 
 
     Animation idle = NewAnimation("idle", 2);
-    PushFrameAnimation(&idle, (Rectangle) {0, 0, size.x, size.y});
-    PushFrameAnimation(&idle, (Rectangle) {0, 0, size.x, size.y});
+    PushFrameAnimation(&idle, (Rectangle) {size.x, size.y, size.x, size.y});
+    PushFrameAnimation(&idle, (Rectangle) {size.x, size.y, size.x, size.y});
     PushAnimationAnimator(&player.animator, idle);
 
     Animation run = NewAnimation("run", 4);
-    PushFrameAnimation(&run, (Rectangle) {size.x*2, 0, size.x, size.y});
-    PushFrameAnimation(&run, (Rectangle) {0, size.y, size.x, size.y});
-    PushFrameAnimation(&run, (Rectangle) {size.x*2, 0, size.x, size.y});
-    PushFrameAnimation(&run, (Rectangle) {0, size.y, size.x, size.y});
+    PushFrameAnimation(&run, (Rectangle) {0, size.y*2, size.x, size.y});
+    PushFrameAnimation(&run, (Rectangle) {size.x, size.y*2, size.x, size.y});
+    PushFrameAnimation(&run, (Rectangle) {0, size.y*2, size.x, size.y});
+    PushFrameAnimation(&run, (Rectangle) {size.x, size.y*2, size.x, size.y});
     PushAnimationAnimator(&player.animator, run);
+
+    Animation jump = NewAnimation("jump", 2);
+    PushFrameAnimation(&jump, (Rectangle) {size.x, size.y*3, size.x, size.y});
+    PushFrameAnimation(&jump, (Rectangle) {size.x, size.y*3, size.x, size.y});
+    PushAnimationAnimator(&player.animator, jump);
     
     return player;
 }
@@ -46,7 +51,10 @@ bool CheckCollision(Shape* shape, Map* map) {
 
     Rectangle rectPlayer = GetRectangle(shape);
     while (auxTileMap != NULL) {
-        if (auxTileMap->fkTile->solid && CheckCollisionRecs(rectPlayer, (Rectangle) {auxTileMap->position.x, auxTileMap->position.y, map->quad, map->quad}))
+        if (auxTileMap->fkTile->solid && CheckCollisionRecs(rectPlayer, 
+        (Rectangle) {auxTileMap->position.x+auxTileMap->fkTile->diff.x, 
+        auxTileMap->position.y+auxTileMap->fkTile->diff.y, auxTileMap->fkTile->size.x, 
+        auxTileMap->fkTile->size.y}))
             return true;
         
         auxTileMap = auxTileMap->prox;
@@ -55,15 +63,21 @@ bool CheckCollision(Shape* shape, Map* map) {
     return false;
 }
 
-bool IsGround(Shape* shape, Map* map) {
+bool IsGround(Player* player, Map* map) {
     TileMap* auxTileMap = map->tileMap;
 
-    Rectangle rectPlayer = GetRectangle(shape);
+    Rectangle rectPlayer = GetRectangle(&player->ground);
     Rectangle rectTile;
     while (auxTileMap != NULL) {
-        rectTile = (Rectangle) {auxTileMap->position.x, auxTileMap->position.y, map->quad, map->quad};
-        if (CheckCollisionRecs(rectPlayer, rectTile)) // && (rectPlayer.y+rectPlayer.height+30) >= rectTile.y
+        rectTile = (Rectangle) {auxTileMap->position.x+auxTileMap->fkTile->diff.x, 
+        auxTileMap->position.y+auxTileMap->fkTile->diff.y, auxTileMap->fkTile->size.x, 
+        auxTileMap->fkTile->size.y};
+        if (CheckCollisionRecs(rectPlayer, rectTile)) {
+            float height = GetCollisionRec(rectPlayer, rectTile).height;
+            player->position.y -= height;
+            global.camera.offset.y += height;
             return true;
+        }
         
         auxTileMap = auxTileMap->prox;
     }
@@ -72,6 +86,8 @@ bool IsGround(Shape* shape, Map* map) {
 }
 
 void EventPlayer(Player* player, Map* map) {
+    bool isJumping = false;
+
     if (IsKeyDown(KEY_LEFT)) {
         if(!player->isLeft ||  !CheckCollision(&(player->shape), map)) {
             player->position.x -= player->velocity;
@@ -92,15 +108,20 @@ void EventPlayer(Player* player, Map* map) {
         SetAnimationAnimator(&player->animator, "idle", player->isLeft);
     }
 
-    player->isGround = IsGround(&(player->ground), map); 
-    if (!player->isGround) {
+    if (IsKeyDown(KEY_UP) && !CheckCollision(&(player->shape), map)) {
+        isJumping = true;
+        player->position.y -= 5.2;
+        global.camera.offset.y += 5.2;
+    }
+
+    player->isGround = IsGround(player, map); 
+    if (!player->isGround)
+        SetAnimationAnimator(&player->animator, "jump", player->isLeft);
+    
+    if (!player->isGround && !isJumping) {
         player->position.y += 9.8;
         global.camera.offset.y -= 9.8;
     }
-    // else if (IsKeyDown(KEY_SPACE)) {
-    //     player->position.y -= 225.8;
-    //     global.camera.offset.y += 225.8;
-    // }
 
     player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
     player->ground.position = (Vector2) {player->position.x + 69, player->position.y + 112};

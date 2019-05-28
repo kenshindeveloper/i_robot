@@ -9,13 +9,15 @@
 typedef struct Player {
     Vector2 position;
     Animator animator;
+
     bool isLeft;
-    Shape shape;
-    Shape ground;
     bool isGround;
+    bool isJumping;
 
     float velocity;
-
+    
+    Shape shape;
+    Shape ground;
 }Player;
 
 bool CheckCollision(Shape*, Map*);
@@ -28,6 +30,6 @@ void EventPlayer(Player*, Map*);
 
 void DrawPlayer(Player*);
 
-bool IsGround(Shape*, Map*);
+bool IsGround(Player*, Map*);
 
 #endif //IPLAYER_H

@@ -6,11 +6,13 @@
 
 extern Global global;
 
-void _LoadTile(Tile** tile, int id, Rectangle rectangle, bool solid) {
+void _LoadTile(Tile** tile, int id, Rectangle rectangle, Vector2 size, Vector2 diff, bool solid) {
     if ((*tile) == NULL) {
         (*tile) = (Tile*) malloc(sizeof(Tile));
         (*tile)->id = id;
         (*tile)->rectangle = rectangle;
+        (*tile)->size = size;
+        (*tile)->diff = diff;
         (*tile)->solid = solid;
         (*tile)->prox = NULL;
     }
@@ -22,6 +24,8 @@ void _LoadTile(Tile** tile, int id, Rectangle rectangle, bool solid) {
         auxTile->prox = (Tile*) malloc(sizeof(Tile));
         auxTile->prox->id = id;
         auxTile->prox->rectangle = rectangle;
+        auxTile->prox->size = size;
+        auxTile->prox->diff = diff;
         auxTile->prox->solid = solid;
         auxTile->prox->prox = NULL;
     }
@@ -52,38 +56,32 @@ Map NewMap(const char* path, const char* pathImage, Vector2 size, Vector2 dimens
 
     ReadFileMap(&map);
 
-    // for (int i=0; i < map.size.y; i++) {
-    //     for (int j=0; j < map.size.x; j++)
-    //         printf("%d ", map.matrix[i][j]);
-    //     printf("\n"); 
-    // }
-
     //Carga los tiles
     map.quad = (int) (map.image.width / map.dimension.x);
     // Load first row
-    _LoadTile(&map.tiles, -1, (Rectangle) {0, 0, 0, 0}, false);
-    _LoadTile(&map.tiles, 0, (Rectangle) {0, 0, map.quad, map.quad}, true);
-    _LoadTile(&map.tiles, 1, (Rectangle) {map.quad, 0, map.quad, map.quad}, false);
-    _LoadTile(&map.tiles, 2, (Rectangle) {map.quad*2, 0, map.quad, map.quad}, true);
+    _LoadTile(&map.tiles, -1, (Rectangle) {0, 0, 0, 0}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, false);
+    _LoadTile(&map.tiles, 0, (Rectangle) {0, 0, map.quad, map.quad}, (Vector2) {map.quad, map.quad-9}, (Vector2) {0, 9}, true);
+    _LoadTile(&map.tiles, 1, (Rectangle) {map.quad, 0, map.quad, map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, false);
+    _LoadTile(&map.tiles, 2, (Rectangle) {map.quad*2, 0, map.quad, map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
 
-    _LoadTile(&map.tiles, 3, (Rectangle) {0, map.quad, map.quad, map.quad}, true);
-    _LoadTile(&map.tiles, 4, (Rectangle) {map.quad, map.quad, map.quad, map.quad}, true);
-    _LoadTile(&map.tiles, 5, (Rectangle) {map.quad*2,map.quad,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 3, (Rectangle) {0, map.quad, map.quad, map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
+    _LoadTile(&map.tiles, 4, (Rectangle) {map.quad, map.quad, map.quad, map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
+    _LoadTile(&map.tiles, 5, (Rectangle) {map.quad*2,map.quad,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
 
-    _LoadTile(&map.tiles, 6, (Rectangle) {0,map.quad*2,map.quad,map.quad}, true);
-    _LoadTile(&map.tiles, 7, (Rectangle) {map.quad,map.quad*2,map.quad,map.quad}, true);
-    _LoadTile(&map.tiles, 8, (Rectangle) {map.quad*2,map.quad*2,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 6, (Rectangle) {0,map.quad*2,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
+    _LoadTile(&map.tiles, 7, (Rectangle) {map.quad,map.quad*2,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
+    _LoadTile(&map.tiles, 8, (Rectangle) {map.quad*2,map.quad*2,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
 
-    _LoadTile(&map.tiles, 9, (Rectangle) {0,map.quad*3,map.quad,map.quad}, true);
-    _LoadTile(&map.tiles, 10, (Rectangle) {map.quad,map.quad*3,map.quad,map.quad}, true);
-    _LoadTile(&map.tiles, 11, (Rectangle) {map.quad*2,map.quad*3,map.quad,map.quad}, true);
+    _LoadTile(&map.tiles, 9, (Rectangle) {0,map.quad*3,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
+    _LoadTile(&map.tiles, 10, (Rectangle) {map.quad,map.quad*3,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
+    _LoadTile(&map.tiles, 11, (Rectangle) {map.quad*2,map.quad*3,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
 
-    _LoadTile(&map.tiles, 12, (Rectangle) {0,map.quad*4,map.quad,map.quad}, true);
-    _LoadTile(&map.tiles, 13, (Rectangle) {map.quad,map.quad*4,map.quad,map.quad}, false);
-    _LoadTile(&map.tiles, 14, (Rectangle) {map.quad*2,map.quad*4,map.quad,map.quad}, false);
+    _LoadTile(&map.tiles, 12, (Rectangle) {0,map.quad*4,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
+    _LoadTile(&map.tiles, 13, (Rectangle) {map.quad,map.quad*4,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, false);
+    _LoadTile(&map.tiles, 14, (Rectangle) {map.quad*2,map.quad*4,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, false);
 
-    _LoadTile(&map.tiles, 15, (Rectangle) {0,map.quad*5,map.quad,map.quad}, false);
-    _LoadTile(&map.tiles, 16, (Rectangle) {map.quad,map.quad*5,map.quad,map.quad}, false);
+    _LoadTile(&map.tiles, 15, (Rectangle) {0,map.quad*5,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, false);
+    _LoadTile(&map.tiles, 16, (Rectangle) {map.quad,map.quad*5,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, false);
     // _LoadTile(&map.tiles, 15, (Rectangle) {quad*2,map.quad*4,map.quad,map.quad});
     _InitPositionTile(&map);
 
@@ -228,7 +226,9 @@ void DrawMap(Map* map) {
         DrawTextureRec(map->texture, auxTileMap->fkTile->rectangle, auxTileMap->position, WHITE);
         
         if (global.isViewShape)
-            DrawRectangle(auxTileMap->position.x, auxTileMap->position.y, map->quad, map->quad, global.groundColor);
+            DrawRectangle(auxTileMap->position.x+auxTileMap->fkTile->diff.x, 
+        auxTileMap->position.y+auxTileMap->fkTile->diff.y, auxTileMap->fkTile->size.x, 
+        auxTileMap->fkTile->size.y, global.groundColor);
 
         auxTileMap = auxTileMap->prox;
     }
