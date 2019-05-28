@@ -13,10 +13,10 @@ Player NewPlayer(Vector2 position) {
     Vector2 size = ImageQuadAnimator(&player.animator);
     
     player.shape.position = (Vector2) {position.x + 64, position.y + 42};
-    player.shape.size = (Vector2) {32 * 2, 32 *2};
+    player.shape.size = (Vector2) {32 * 2, 64};
     player.shape.color = (Color) {0.0f, 150.f, 200.0f, 100.0f};
 
-    player.ground.position = (Vector2) {position.x + 69, position.y + 115};
+    player.ground.position = (Vector2) {position.x + 69, position.y + 112};
     player.ground.size = (Vector2) {54, 24};
     player.ground.color = (Color) {150.f, 150.f, 0.0f, 200.0f};
     player.isGround = false;
@@ -97,14 +97,20 @@ void EventPlayer(Player* player, Map* map) {
         player->position.y += 9.8;
         global.camera.offset.y -= 9.8;
     }
-    
+    // else if (IsKeyDown(KEY_SPACE)) {
+    //     player->position.y -= 225.8;
+    //     global.camera.offset.y += 225.8;
+    // }
+
     player->shape.position = (Vector2) {player->position.x + 64, player->position.y + 42};
-    player->ground.position = (Vector2) {player->position.x + 69, player->position.y + 115};
+    player->ground.position = (Vector2) {player->position.x + 69, player->position.y + 112};
     global.camera.target = player->position;
 }
 
 void DrawPlayer(Player* player) {
     DrawAnimator(&player->animator, player->position);
-    DrawShape(&player->shape);
-    DrawShape(&player->ground);
+    if (global.isViewShape) {
+        DrawShape(&player->shape);
+        DrawShape(&player->ground);
+    }
 }

@@ -11,7 +11,6 @@ Grid NewGrid(Vector2 size) {
 
 void DrawIGrid(Grid* grid) {
     grid->position = (Vector2) {0, 0};
-
     for (int i=0; i < grid->size.y; i++) {
         DrawLine(grid->position.x, grid->position.y, grid->position.x, 3660, grid->color);
         grid->position.x += 64;

@@ -154,10 +154,10 @@ bool ReadFileMap(Map* map) {
     if (file == NULL) 
         return false;
 
-    char* string = (char*) calloc(128, sizeof(char));
+    char* string = (char*) calloc(512, sizeof(char));
     int index = 0;
     while (feof(file) == 0 && index < map->size.y) {
-        fgets(string, 128, file);
+        fgets(string, 512, file);
         Split(map, index, string); 
         index++;
     }
@@ -226,7 +226,8 @@ void DrawMap(Map* map) {
 
     while(auxTileMap != NULL) {
         DrawTextureRec(map->texture, auxTileMap->fkTile->rectangle, auxTileMap->position, WHITE);
-        if (auxTileMap->fkTile->solid)
+        
+        if (global.isViewShape)
             DrawRectangle(auxTileMap->position.x, auxTileMap->position.y, map->quad, map->quad, global.groundColor);
 
         auxTileMap = auxTileMap->prox;

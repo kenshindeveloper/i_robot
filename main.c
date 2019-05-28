@@ -17,22 +17,19 @@ int main(int argc, char* argv[]) {
     SetTargetFPS(config.fps);
     SetExitKey(KEY_F8);
     
-    Player player = NewPlayer((Vector2) {100.0f, 100.0f});
+    Player player = NewPlayer((Vector2) {500.0f, 800.0f});
     global.camera.target = player.position;
-
-    Map map = NewMap("resources/maps/map_0.csv", "resources/sprites/tiles.png", (Vector2) {32, 16}, (Vector2) {3, 5});
-    
-    Grid grid = NewGrid((Vector2) {20, 20});
+    Map map = NewMap("resources/maps/map_0.csv", "resources/sprites/tiles.png", (Vector2) {64, 20}, (Vector2) {3, 5});
 
     while(!WindowShouldClose()) {
+        EventGlobal(&global);
         EventPlayer(&player, &map);
-
-        ClearBackground(BLACK);
+        ClearBackground(global.background);
         BeginDrawing();
             BeginMode2D(global.camera);
-                DrawIGrid(&grid);
-                DrawMap(&map);
                 DrawPlayer(&player);
+                DrawMap(&map);
+                DrawGlobal(&global);
             EndMode2D();
         EndDrawing();
     }
