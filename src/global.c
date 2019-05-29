@@ -9,7 +9,7 @@ Global NewGlobal() {
 
     global.valueMinTile = -100;
     global.groundColor = (Color) {255.0f, 0.0f, 0.0f, 155.0f};
-    global.background = (Color) {226.0f, 243.0f, 228.0f, 255.0f};
+    global.background = (Color) {224.0f, 219.0f, 205.0f, 255.0f};
 
     global.isViewGrid = false;
     global.isViewShape = false;

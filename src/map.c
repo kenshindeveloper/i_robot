@@ -225,7 +225,7 @@ void DrawMap(Map* map) {
     while(auxTileMap != NULL) {
         DrawTextureRec(map->texture, auxTileMap->fkTile->rectangle, auxTileMap->position, WHITE);
         
-        if (global.isViewShape)
+        if (global.isViewShape && auxTileMap->fkTile->solid)
             DrawRectangle(auxTileMap->position.x+auxTileMap->fkTile->diff.x, 
         auxTileMap->position.y+auxTileMap->fkTile->diff.y, auxTileMap->fkTile->size.x, 
         auxTileMap->fkTile->size.y, global.groundColor);

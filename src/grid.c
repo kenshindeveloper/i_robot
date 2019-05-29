@@ -18,7 +18,7 @@ void DrawIGrid(Grid* grid) {
     
     grid->position = (Vector2) {0, 0};
     for (int j=0; j < grid->size.y; j++) {
-        DrawLine(grid->position.x, grid->position.y, 3660, grid->position.y, grid->color);
+        DrawLine(grid->position.x, grid->position.y, 4660, grid->position.y, grid->color);
         grid->position.y += 64;
     }
 }
