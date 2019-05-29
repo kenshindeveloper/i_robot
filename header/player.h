@@ -5,6 +5,7 @@
 #include "animator.h"
 #include "shape.h"
 #include "map.h"
+#include "trigger.h"
 
 typedef struct Player {
     Vector2 position;
@@ -21,6 +22,8 @@ typedef struct Player {
     Shape shape;
     Shape ground;
     Shape head;
+
+    Trigger trigger;
 }Player;
 
 bool CheckCollision(Shape*, Map*);

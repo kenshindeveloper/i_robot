@@ -29,6 +29,7 @@ Player NewPlayer(Vector2 position) {
     player.head.size = (Vector2) {54, 27};
     player.head.color = (Color) {150.f, 150.f, 0.0f, 200.0f};
 
+    player.trigger = NewTrigger((Rectangle) {position.x, position.y, 15, 15}, MAGENTA);
 
     Animation idle = NewAnimation("idle", 2);
     PushFrameAnimation(&idle, (Rectangle) {size.x, size.y, size.x, size.y});
@@ -174,6 +175,7 @@ void EventPlayer(Player* player, Map* map) {
     player->ground.position = (Vector2) {player->position.x + 69, player->position.y + 112};
     player->head.position = (Vector2) {player->position.x + 69, player->position.y + 42};
     global.camera.target = player->position;
+    EventTrigger(&player->trigger, player->position, player->isLeft, isJumping);
 }
 
 void DrawPlayer(Player* player) {
@@ -182,5 +184,6 @@ void DrawPlayer(Player* player) {
         DrawShape(&player->shape);
         DrawShape(&player->ground);
         DrawShape(&player->head);
+        DrawTrigger(&player->trigger);
     }
 }

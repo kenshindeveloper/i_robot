@@ -284,6 +284,7 @@ PROJECT_SOURCE_FILES ?= main.c          \
                         src/global.c    \
                         src/grid.c      \
                         src/gui.c       \
+                        src/trigger.c   \
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
