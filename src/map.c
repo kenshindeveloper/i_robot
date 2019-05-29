@@ -60,13 +60,13 @@ Map NewMap(const char* path, const char* pathImage, Vector2 size, Vector2 dimens
     map.quad = (int) (map.image.width / map.dimension.x);
     // Load first row
     _LoadTile(&map.tiles, -1, (Rectangle) {0, 0, 0, 0}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, false);
-    _LoadTile(&map.tiles, 0, (Rectangle) {0, 0, map.quad, map.quad}, (Vector2) {map.quad, map.quad-9}, (Vector2) {0, 9}, true);
+    _LoadTile(&map.tiles, 0, (Rectangle) {0, 0, map.quad, map.quad}, (Vector2) {map.quad, map.quad-18}, (Vector2) {0, 18}, true);
     _LoadTile(&map.tiles, 1, (Rectangle) {map.quad, 0, map.quad, map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, false);
-    _LoadTile(&map.tiles, 2, (Rectangle) {map.quad*2, 0, map.quad, map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
+    _LoadTile(&map.tiles, 2, (Rectangle) {map.quad*2, 0, map.quad, map.quad}, (Vector2) {map.quad, map.quad-18}, (Vector2) {0, 18}, true);
 
     _LoadTile(&map.tiles, 3, (Rectangle) {0, map.quad, map.quad, map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
     _LoadTile(&map.tiles, 4, (Rectangle) {map.quad, map.quad, map.quad, map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
-    _LoadTile(&map.tiles, 5, (Rectangle) {map.quad*2,map.quad,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
+    _LoadTile(&map.tiles, 5, (Rectangle) {map.quad*2,map.quad,map.quad,map.quad}, (Vector2) {map.quad, map.quad-18}, (Vector2) {0, 18}, true);
 
     _LoadTile(&map.tiles, 6, (Rectangle) {0,map.quad*2,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);
     _LoadTile(&map.tiles, 7, (Rectangle) {map.quad,map.quad*2,map.quad,map.quad}, (Vector2) {map.quad, map.quad}, (Vector2) {0, 0}, true);

@@ -5,6 +5,7 @@
 #include "header/player.h"
 #include "header/map.h"
 #include "header/grid.h"
+#include "header/gui.h"
 
 Config config;
 Global global;
@@ -12,18 +13,21 @@ Global global;
 int main(int argc, char* argv[]) {
     config = NewConfig();
     global = NewGlobal();
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    // SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(config.screenWidth, config.screenHeight, config.title);
     SetTargetFPS(config.fps);
     SetExitKey(KEY_F8);
     
-    Player player = NewPlayer((Vector2) {500.0f, 800.0f});
+    Player player = NewPlayer((Vector2) {1400.0f, 1800.0f});
     global.camera.target = player.position;
     Map map = NewMap("resources/maps/map_0.csv", "resources/sprites/tiles.png", (Vector2) {64, 20}, (Vector2) {3, 5});
+
+    Gui gui = NewGui((Rectangle) {0, 0, config.screenWidth, 80.0f}, (Color) {43.0f, 43.0f, 38.0f, 255.0f});
 
     while(!WindowShouldClose()) {
         EventGlobal(&global);
         EventPlayer(&player, &map);
+        EventGui(&gui);
         ClearBackground(global.background);
         BeginDrawing();
             BeginMode2D(global.camera);
@@ -31,10 +35,12 @@ int main(int argc, char* argv[]) {
                 DrawMap(&map);
                 DrawGlobal(&global);
             EndMode2D();
+            DrawGui(&gui);
         EndDrawing();
     }
     DeletePlayer(&player);
     DeleteMap(&map);
+    DeleteGui(&gui);
     CloseWindow();
 
     return 0;

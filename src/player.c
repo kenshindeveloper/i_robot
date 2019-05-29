@@ -10,7 +10,7 @@ Player NewPlayer(Vector2 position) {
     player.position = position;
     player.animator = NewAnimator("resources/sprites/players.png", 5, 3.0f, (Vector2) {3.0f, 4.0f});
     player.isLeft = true;
-
+    player.isDown = false;
     player.velocity = 5.0f;
     player.contAnimaClose = 0.0f;
 
@@ -111,7 +111,7 @@ void EventPlayer(Player* player, Map* map) {
 
     player->isGround = IsGround(player, map); 
     
-    if (IsKeyDown(KEY_LEFT)) {
+    if (!player->isDown && IsKeyDown(KEY_LEFT)) {
         if(!player->isLeft || !CheckCollision(&(player->shape), map)) {
             player->position.x -= player->velocity;
             global.camera.offset.x += player->velocity;
@@ -119,7 +119,7 @@ void EventPlayer(Player* player, Map* map) {
         }
         player->isLeft = true;
     }
-    else if (IsKeyDown(KEY_RIGHT)) {
+    else if (!player->isDown && IsKeyDown(KEY_RIGHT)) {
         if (player->isLeft || !CheckCollision(&(player->shape), map)) {
             player->position.x += player->velocity;
             global.camera.offset.x -= player->velocity;
@@ -130,16 +130,27 @@ void EventPlayer(Player* player, Map* map) {
     else if (player->contAnimaClose < 2)
         SetAnimationAnimator(&player->animator, "idle", player->isLeft);
     
-    if (IsKeyDown(KEY_UP) && !CheckCollision(&(player->head), map)) {
+    if (global.power > 0 && IsKeyDown(KEY_UP) && !CheckCollision(&(player->head), map)) {
+        global.contPower += GetFrameTime();
+        if (global.contPower > 0.5) {
+            global.power -= 3;
+            global.contPower = 0.0f;
+        } 
         isJumping = true;
+        player->isDown = false;
         player->position.y -= 5.2;
         global.camera.offset.y += 5.2;
         SetAnimationAnimator(&player->animator, "jump", player->isLeft);
     }
     
     if (player->isGround) {
-        if (IsKeyDown(KEY_DOWN))
+        if (IsKeyDown(KEY_DOWN)) {
             SetAnimationAnimator(&player->animator, "down", player->isLeft);
+            player->isDown = true;
+        }
+        else
+            player->isDown = false;
+            
         
         if (strcmp(GetNameAnimator(&player->animator), "idle") == 0 || strcmp(GetNameAnimator(&player->animator), "close") == 0) {
             player->contAnimaClose += GetFrameTime();

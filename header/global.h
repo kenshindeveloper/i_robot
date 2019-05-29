@@ -7,11 +7,17 @@
 typedef struct Global {
     Camera2D camera;  
     int valueMinTile;
+    int power;
+
+    float contPower;
+
     Color groundColor;  
     Color background;
 
     bool isViewGrid;
     bool isViewShape;
+    bool isViewCursor;
+    
     Grid grid;
 
 }Global;

@@ -13,6 +13,7 @@ typedef struct Player {
     bool isLeft;
     bool isGround;
     bool isJumping;
+    bool isDown;
 
     float velocity;
     float contAnimaClose;
