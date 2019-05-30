@@ -6,6 +6,7 @@
 #include "shape.h"
 #include "map.h"
 #include "trigger.h"
+#include "smoke.h"
 
 typedef struct Player {
     Vector2 position;
@@ -15,6 +16,7 @@ typedef struct Player {
     bool isGround;
     bool isJumping;
     bool isDown;
+    bool isUp;
 
     float velocity;
     float contAnimaClose;
@@ -24,6 +26,8 @@ typedef struct Player {
     Shape head;
 
     Trigger trigger;
+
+    Smoke smoke;
 }Player;
 
 bool CheckCollision(Shape*, Map*);

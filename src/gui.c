@@ -47,8 +47,8 @@ void DeleteImgGUI(ImgGUI* imgGui) {
 
 Power NewPower() {
     Power power = {0};
-    power.background = NewImgGUI("resources/sprites/power_base.png", (Vector2) {config.screenWidth-150, 10}, false);
-    power.full = NewImgGUI("resources/sprites/power_full.png", (Vector2) {config.screenWidth-150, 10}, true);
+    power.background = NewImgGUI("resources/sprites/power_base.png", (Vector2) {config.screenWidth-150, -2}, false);
+    power.full = NewImgGUI("resources/sprites/power_full.png", (Vector2) {config.screenWidth-150, -2}, true);
 
     return power;
 }

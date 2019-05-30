@@ -17,12 +17,11 @@ int main(int argc, char* argv[]) {
     InitWindow(config.screenWidth, config.screenHeight, config.title);
     SetTargetFPS(config.fps);
     SetExitKey(KEY_F8);
-    
-    Player player = NewPlayer((Vector2) {1400.0f, 1800.0f});
+    Player player = NewPlayer((Vector2) {1090.0f, 1870.0f});
     global.camera.target = player.position;
     Map map = NewMap("resources/maps/map_0.csv", "resources/sprites/tiles.png", (Vector2) {64, 20}, (Vector2) {3, 5});
 
-    Gui gui = NewGui((Rectangle) {0, 0, config.screenWidth, 80.0f}, (Color) {43.0f, 43.0f, 38.0f, 255.0f});
+    Gui gui = NewGui((Rectangle) {0, 0, config.screenWidth, 60.0f}, (Color) {43.0f, 43.0f, 38.0f, 255.0f});
 
     while(!WindowShouldClose()) {
         EventGlobal(&global);
@@ -45,4 +44,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-

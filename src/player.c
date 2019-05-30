@@ -9,7 +9,7 @@ Player NewPlayer(Vector2 position) {
     Player player;
     player.position = position;
     player.animator = NewAnimator("resources/sprites/players.png", 5, 3.0f, (Vector2) {3.0f, 4.0f});
-    player.isLeft = true;
+    player.isLeft = false;
     player.isDown = false;
     player.velocity = 5.0f;
     player.contAnimaClose = 0.0f;
@@ -30,6 +30,9 @@ Player NewPlayer(Vector2 position) {
     player.head.color = (Color) {150.f, 150.f, 0.0f, 200.0f};
 
     player.trigger = NewTrigger((Rectangle) {position.x, position.y, 15, 15}, MAGENTA);
+
+    player.smoke = NewSmoke("resources/sprites/smoke.png", 100);
+    player.isUp = false;
 
     Animation idle = NewAnimation("idle", 2);
     PushFrameAnimation(&idle, (Rectangle) {size.x, size.y, size.x, size.y});
@@ -64,6 +67,7 @@ Player NewPlayer(Vector2 position) {
 
 void DeletePlayer(Player* player) {
     DeleteAnimator(&player->animator);
+    DeleteSmoke(&player->smoke);
 }
 
 bool CheckCollision(Shape* shape, Map* map) {
@@ -109,6 +113,7 @@ bool IsGround(Player* player, Map* map) {
 
 void EventPlayer(Player* player, Map* map) {
     bool isJumping = false;
+    player->isUp = false;
 
     player->isGround = IsGround(player, map); 
     
@@ -139,6 +144,7 @@ void EventPlayer(Player* player, Map* map) {
         } 
         isJumping = true;
         player->isDown = false;
+        player->isUp = true;
         player->position.y -= 5.2;
         global.camera.offset.y += 5.2;
         SetAnimationAnimator(&player->animator, "jump", player->isLeft);
@@ -175,10 +181,14 @@ void EventPlayer(Player* player, Map* map) {
     player->ground.position = (Vector2) {player->position.x + 69, player->position.y + 112};
     player->head.position = (Vector2) {player->position.x + 69, player->position.y + 42};
     global.camera.target = player->position;
+
     EventTrigger(&player->trigger, player->position, player->isLeft, isJumping);
+    EventSmoke(&player->smoke, player->position, player->isLeft, player->isUp);
 }
 
 void DrawPlayer(Player* player) {
+    DrawSmoke(&player->smoke);
+    
     DrawAnimator(&player->animator, player->position);
     if (global.isViewShape) {
         DrawShape(&player->shape);

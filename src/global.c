@@ -3,7 +3,7 @@
 
 Global NewGlobal() {
     Global global;
-    global.camera.offset = (Vector2) {-1150, -1600};
+    global.camera.offset = (Vector2) {-840, -1670};
     global.camera.rotation = 0.0f;
     global.camera.zoom = 1.0f;
 
