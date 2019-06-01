@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "raylib.h"
 #include "header/config.h"
 #include "header/global.h"
@@ -6,13 +8,16 @@
 #include "header/map.h"
 #include "header/grid.h"
 #include "header/gui.h"
+#include "header/collisions.h"
 
 Config config;
 Global global;
+Collisions* collisions;
 
 int main(int argc, char* argv[]) {
     config = NewConfig();
     global = NewGlobal();
+    collisions = NULL;
     // SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(config.screenWidth, config.screenHeight, config.title);
     SetTargetFPS(config.fps);

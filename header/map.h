@@ -3,21 +3,38 @@
 
 #include "raylib.h"
 
+/**
+ *  estructura: Tile
+ *  permite almacenar el tile
+ *  unico para el renderizado.
+ * **/
 typedef struct Tile {
-    int id;
+    int id; //  id representa el numero unico por Tile.
     Rectangle rectangle;
-    Vector2 size;
-    Vector2 diff;
+    Vector2 size; //  tamano (x, y) del shape colision. 
+    Vector2 diff; //  diferencia en x, y para el shape de la colision.
     struct Tile* prox;
     bool solid;
 }Tile;
 
+/**
+ *  estructura: TileMap
+ *  permite almacenar la relacion de un Tile con una 
+ *  posicion, el tile es un puntero a una estructura tipo
+ *  Tile.
+ **/
 typedef struct TileMap {
     Tile* fkTile; 
     Vector2 position;
     struct TileMap* prox;
 }TileMap;
 
+/**
+ *  estructura: Map
+ *  guarda la informacion del TilSet que se carga,
+ *  representa el mapa y contiene la informacion 
+ *  relacionada.
+ * **/
 typedef struct Map {
     const char* path;
     Image image;

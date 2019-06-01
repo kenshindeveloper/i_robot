@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include "../header/bullet.h"
+#include "../header/collisions.h"
+
+extern Collisions* collisions;
 
 /**
  * Crea una estructura tipo Bullet
@@ -10,7 +13,7 @@ Bullet NewBullet(Vector2 size) {
     bullet.position = (Vector2) {0.0f, 0.0f};
     bullet.isLeft = false;
     bullet.active = false;
-    bullet.velocity = 5.0f;
+    bullet.velocity = 15.0f;
     bullet.shape = NewShape(bullet.position, size, RAYWHITE);
     return bullet;
 }
@@ -28,6 +31,18 @@ void DrawBullet(Bullet* bullet, Texture2D* texture) {
             bullet->position,
             BLACK
         );
+    }
+
+    Rectangle playerRect = (Rectangle) {
+        bullet->shape.position.x, 
+        bullet->shape.position.y, 
+        bullet->shape.size.x,
+        bullet->shape.size.y
+    };
+
+    if (CheckCollisions(collisions, &playerRect)) {
+        printf("bullet desactivado...\n");
+        DeactivateBullet(bullet);
     }
 
 }

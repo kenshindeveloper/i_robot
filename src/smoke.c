@@ -12,7 +12,7 @@ Smoke NewSmoke(const char* path, int num) {
         smoke.particles[i].position = (Vector2) {0.0f, 0.0f};
         smoke.particles[i].color = (Color) {43, 43, 38, 255},
         smoke.particles[i].alpha = 1.0f;
-        smoke.particles[i].size = (float) GetRandomValue(1, 8) /20.0f; 
+        smoke.particles[i].size = (float) GetRandomValue(1, 3) /20.0f; 
         smoke.particles[i].rotation = 1.0f;
         smoke.particles[i].active = false;
     }

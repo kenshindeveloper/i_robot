@@ -11,7 +11,7 @@ Trigger NewTrigger(Rectangle rectangle, Color color) {
     trigger.color = color;
 
     trigger.image = LoadImage("resources/sprites/smoke.png");
-    ImageResizeNN(&trigger.image, trigger.image.width/2, trigger.image.height/2);
+    ImageResizeNN(&trigger.image, trigger.image.width/5, trigger.image.height/5);
     trigger.texture = LoadTextureFromImage(trigger.image);
     
     trigger.maxBullet = 5;

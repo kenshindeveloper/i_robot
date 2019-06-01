@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "../header/map.h"
 #include "../header/global.h"
+#include "../header/collisions.h"
 
 extern Global global;
+extern Collisions* collisions;
 
 void _LoadTile(Tile** tile, int id, Rectangle rectangle, Vector2 size, Vector2 diff, bool solid) {
     if ((*tile) == NULL) {
@@ -98,6 +101,15 @@ void _InitPositionTile(Map* map) {
                 map->tileMap->fkTile = _GetTile(map, map->matrix[i][j]);
                 map->tileMap->position = position;
                 map->tileMap->prox = NULL;
+                AddCollisions(
+                    &collisions, 
+                    (Rectangle) {
+                        position.x, 
+                        position.y, 
+                        map->tileMap->fkTile->size.x,
+                        map->tileMap->fkTile->size.y
+                    }
+                );
             }
             else if (map->matrix[i][j] >= 0) {
                 TileMap* auxTileMap = map->tileMap;
@@ -108,6 +120,16 @@ void _InitPositionTile(Map* map) {
                 auxTileMap->prox->fkTile = _GetTile(map, map->matrix[i][j]);
                 auxTileMap->prox->position = position;
                 auxTileMap->prox->prox = NULL;
+
+                AddCollisions(
+                    &collisions, 
+                    (Rectangle) {
+                        position.x, 
+                        position.y, 
+                        auxTileMap->prox->fkTile->size.x,
+                        auxTileMap->prox->fkTile->size.y
+                    }
+                );
             }
             position.x += map->quad;
         }
@@ -226,9 +248,13 @@ void DrawMap(Map* map) {
         DrawTextureRec(map->texture, auxTileMap->fkTile->rectangle, auxTileMap->position, WHITE);
         
         if (global.isViewShape && auxTileMap->fkTile->solid)
-            DrawRectangle(auxTileMap->position.x+auxTileMap->fkTile->diff.x, 
-        auxTileMap->position.y+auxTileMap->fkTile->diff.y, auxTileMap->fkTile->size.x, 
-        auxTileMap->fkTile->size.y, global.groundColor);
+            DrawRectangle(
+                auxTileMap->position.x+auxTileMap->fkTile->diff.x, 
+                auxTileMap->position.y+auxTileMap->fkTile->diff.y, 
+                auxTileMap->fkTile->size.x, 
+                auxTileMap->fkTile->size.y, 
+                global.groundColor
+            );
 
         auxTileMap = auxTileMap->prox;
     }
