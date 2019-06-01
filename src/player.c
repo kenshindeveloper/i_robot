@@ -68,6 +68,7 @@ Player NewPlayer(Vector2 position) {
 void DeletePlayer(Player* player) {
     DeleteAnimator(&player->animator);
     DeleteSmoke(&player->smoke);
+    DeleteTrigger(&player->trigger);
 }
 
 bool CheckCollision(Shape* shape, Map* map) {
@@ -194,6 +195,6 @@ void DrawPlayer(Player* player) {
         DrawShape(&player->shape);
         DrawShape(&player->ground);
         DrawShape(&player->head);
-        DrawTrigger(&player->trigger);
     }
+    DrawTrigger(&player->trigger);
 }
