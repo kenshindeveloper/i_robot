@@ -1,3 +1,12 @@
+/**
+ * @file animation.c
+ * @author Franklin Morales
+ * @brief 
+ * @version 1.0
+ * @date 2019-06-01
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "../header/animation.h"
@@ -9,17 +18,16 @@ Animation NewAnimation(char* name, int numFrames) {
     Animation animation;
     animation.name = name;
     animation.numFrames = numFrames;
-    animation.frames = (Rectangle*) malloc(sizeof(Rectangle)*numFrames);
+    animation.frames = (Rectangle*) malloc(sizeof(Rectangle)*numFrames); // < reserva de memoria.
     animation.index = 0;
     animation.frameFPS = 0.0f;
 
     return animation;
 }
 
-
 bool PushFrameAnimation(Animation* animation, Rectangle frame) {
     if (animation->index < animation->numFrames) {
-        animation->frames[animation->index++] = frame; //asigna el frame y aumenta el index.
+        animation->frames[animation->index++] = frame; // < asigna el frame y aumenta el index.
 
         return true;
     }
