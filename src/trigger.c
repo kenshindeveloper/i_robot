@@ -14,7 +14,7 @@ Trigger NewTrigger(Rectangle rectangle, Color color) {
     ImageResizeNN(&trigger.image, trigger.image.width/5, trigger.image.height/5);
     trigger.texture = LoadTextureFromImage(trigger.image);
     
-    trigger.maxBullet = 5;
+    trigger.maxBullet = 30;
     trigger.bullets = (Bullet*) malloc(sizeof(Bullet)*trigger.maxBullet);
 
     for (int i=0; i < trigger.maxBullet; i++) 
@@ -25,7 +25,10 @@ Trigger NewTrigger(Rectangle rectangle, Color color) {
 
 void DeleteTrigger(Trigger* trigger) {
     UnloadImage(trigger->image);
-
+    
+    for (int i=0; i < trigger->maxBullet; i++) 
+        DeleteBullet(&trigger->bullets[i]);
+    
     if (trigger->bullets != NULL) {
         free(trigger->bullets);
         trigger->bullets = NULL; 

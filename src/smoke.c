@@ -1,3 +1,15 @@
+/**
+ * @file smoke.c
+ * @author Franklin Morales (Kenshin Urashima)
+ * @brief Definicion de la estructura y las funciones
+ * necesarias para generacion de particulas en el jetpack.
+ * @version 1.0
+ * @date 2019-06-02
+ * 
+ * @copyright Copyright (c) Franklin Morales (Kenshin Urashima) 2019
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "../header/smoke.h"
@@ -14,13 +26,14 @@ Smoke NewSmoke(const char* path, int num) {
         smoke.particles[i].alpha = 1.0f;
         smoke.particles[i].size = (float) GetRandomValue(1, 3) /20.0f; 
         smoke.particles[i].rotation = 1.0f;
+        smoke.particles[i].angle = 0.0f;
         smoke.particles[i].active = false;
     }
 
     return smoke;
 }
 
-void EventSmoke(Smoke* smoke, Vector2 position, bool isLeft, bool isUp) {
+void EventSmoke(Smoke *smoke, Vector2 position, bool isLeft, bool isUp) {
     if (isUp) {
         for (int i=0; i < smoke->num; i++) {
             if (!smoke->particles[i].active) {

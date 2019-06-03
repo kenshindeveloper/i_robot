@@ -288,6 +288,7 @@ PROJECT_SOURCE_FILES ?= main.c              \
                         src/smoke.c         \
                         src/bullet.c        \
                         src/collisions.c    \
+                        src/explotion.c     \
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))

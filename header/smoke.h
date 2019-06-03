@@ -1,31 +1,33 @@
-#if !defined(IPARTICLE_H)
-#define IPARTICLE_H
+/**
+ * @file smoke.h
+ * @author Franklin Morales (Kenshin Urashima)
+ * @brief Definicion de la estructura y las funciones
+ * necesarias para generacion de particulas en el jetpack.
+ * @version 1.0
+ * @date 2019-06-02
+ * 
+ * @copyright Copyright (c) Franklin Morales (Kenshin Urashima) 2019
+ * 
+ */
 
-#include "raylib.h"
+#if !defined(ISMOKE_H)
+#define ISMOKE_H
 
-typedef struct Particle {
-    Vector2 position;
-    Color color;
-    float alpha;
-    float size;
-    float rotation;
-    bool active;
-
-}Particle;
+#include "particle.h"
 
 typedef struct Smoke {
     Texture2D texture;
-    Particle* particles;
+    Particle *particles;
     int num;
 
 }Smoke;
 
-Smoke NewSmoke(const char*, int);
+Smoke NewSmoke(const char* path, int num);
 
-void EventSmoke(Smoke*, Vector2, bool, bool);
+void EventSmoke(Smoke *smoke, Vector2 position, bool isLeft, bool isUp);
 
-void DrawSmoke(Smoke*);
+void DrawSmoke(Smoke *smoke);
 
-void DeleteSmoke(Smoke*);
+void DeleteSmoke(Smoke *smoke);
 
-#endif //IPARTICLE_H
+#endif //ISMOKE_H
